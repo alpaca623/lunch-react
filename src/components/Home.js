@@ -1,4 +1,5 @@
 import React from "react";
+import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import Axios from "axios";
 
@@ -65,6 +66,10 @@ const TodayPrice = styled.span`
   margin: 5px;
 `;
 
+const UpdateList = styled.div``;
+
+const UpdateContent = styled.div``;
+
 class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -88,10 +93,10 @@ class Home extends React.Component {
     let orderList = [];
     let todayMenuSum = 0;
     try {
-      typeList = (await Axios.get("http://localhost:3002/type/list")).data;
-      menuList = (await Axios.get("http://localhost:3002/menu/list")).data;
+      typeList = (await Axios.get("http://192.168.11.150:3002/type/list")).data;
+      menuList = (await Axios.get("http://192.168.11.150:3002/menu/list")).data;
       orderList = (await Axios.get(
-        "http://localhost:3002/order/list?type=today"
+        "http://192.168.11.150:3002/order/list?type=today"
       )).data;
     } catch (e) {
       console.log(e);
@@ -107,6 +112,7 @@ class Home extends React.Component {
   };
 
   saveMenu = async e => {
+    const that = this;
     try {
       const {
         userName: user,
@@ -118,11 +124,13 @@ class Home extends React.Component {
         alert("도시락을 선택하세요");
         return;
       }
-      await Axios.post("http://localhost:3002/order/insert", {
+      await Axios.post("http://192.168.11.150:3002/order/insert", {
         type,
         menu,
         user,
         option
+      }).then(function() {
+        window.location.reload();
       });
     } catch (error) {
       console.log(error);
@@ -232,9 +240,15 @@ class Home extends React.Component {
             {orders}
           </TodayContainer>
         </Content>
+        <UpdateList>
+          <div>추후 업데이트 예정 목록</div>
+          <UpdateContent>디자인 깔끔 수정</UpdateContent>
+          <UpdateContent>도시락 이미지 추가</UpdateContent>
+          <UpdateContent>로그인</UpdateContent>
+        </UpdateList>
       </Container>
     );
   }
 }
 
-export default Home;
+export default withRouter(Home);
