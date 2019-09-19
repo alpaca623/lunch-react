@@ -118,8 +118,14 @@ class Home extends React.Component {
         userName: user,
         selectMenu: menu,
         selectType: type,
-        option
+        option,
+        userName,
       } = this.state;
+      
+      if (userName === "") {
+        alert("이름을 입력해주세요");
+        return;
+      }
       if (menu === "") {
         alert("도시락을 선택하세요");
         return;
@@ -212,11 +218,13 @@ class Home extends React.Component {
                         .filter(menu => {
                           return menu.type === this.state.selectType;
                         })
-                        .map(menu => (
-                          <option key={menu._id} value={menu._id}>
-                            {menu.name}
-                          </option>
-                        ))
+                        .map(menu => {
+                          return (
+                            <option key={menu._id} value={menu._id}>
+                              {`${menu.name}(${menu.price})`}
+                            </option>
+                          );
+                        })
                     ) : (
                       <option>준비중</option>
                     )}

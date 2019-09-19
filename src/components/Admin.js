@@ -39,7 +39,7 @@ class Admin extends React.Component {
   }
   // 대 분류 불러오기
   componentDidMount = async () => {
-    const { data } = await axios.get("http://localhost:3002/type/list");
+    const { data } = await axios.get("http://192.168.11.150:3002/type/list");
     this.setState({ typeList: data });
   };
 
@@ -53,7 +53,7 @@ class Admin extends React.Component {
   // 대 분류 추가하기
   handleSubmitBigMenu = async e => {
     const { type } = this.state;
-    await axios.post("http://localhost:3002/type/insert", { type });
+    await axios.post("http://192.168.11.150:3002/type/insert", { type });
   };
 
   // 중 분류 추가하기
@@ -72,7 +72,7 @@ class Admin extends React.Component {
     }
     // const { name, type, price } = this.state;
     await axios
-      .post("http://localhost:3002/menu/insert", this.state)
+      .post("http://192.168.11.150:3002/menu/insert", this.state)
       .then(o => {
         console.log(this.props);
         this.props.history.push("/admin");
