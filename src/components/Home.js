@@ -112,7 +112,6 @@ class Home extends React.Component {
   };
 
   saveMenu = async e => {
-    const that = this;
     try {
       const {
         userName: user,
