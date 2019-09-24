@@ -3,6 +3,13 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import Axios from "axios";
 
+import dotenv from "dotenv";
+import Result from "./Result";
+
+dotenv.config();
+
+const URL = "http://localhost:3002";
+
 const Container = styled.main``;
 
 const Header = styled.header`
@@ -48,22 +55,31 @@ const TodayContainer = styled.div`
   margin: 20px 10px 10px 10px;
 `;
 
-const TodayListHeader = styled.div`
-  margin: 20px;
-  color: blue;
-`;
 const TodayList = styled.div`
   margin: 20px;
 `;
 
-const TodayUser = styled.span`
-  margin: 5px;
+const MenuTable = styled.table`
+  border: 1px solid black;
+  border-collapse: collapse;
+  text-align:center;
 `;
-const TodayMenu = styled.span`
-  margin: 5px;
+
+const MenuTableHead = styled.thead`
+  background-color:#eee;
 `;
-const TodayPrice = styled.span`
-  margin: 5px;
+
+const MenuTableBody = styled.tbody``;
+
+const MenuTableTr = styled.tr`
+  border: 1px solid black;
+`;
+
+const MenuTableTd = styled.td`
+  border: 1px solid black;
+  width:300px;
+  item-align:center;
+  colspan:${props=>props.colSpan === undefined ? 0 : props.colSpan}
 `;
 
 const UpdateList = styled.div``;
@@ -93,11 +109,9 @@ class Home extends React.Component {
     let orderList = [];
     let todayMenuSum = 0;
     try {
-      typeList = (await Axios.get("http://192.168.11.150:3002/type/list")).data;
-      menuList = (await Axios.get("http://192.168.11.150:3002/menu/list")).data;
-      orderList = (await Axios.get(
-        "http://192.168.11.150:3002/order/list?type=today"
-      )).data;
+      typeList = (await Axios.get(`${URL}/type/list`)).data;
+      menuList = (await Axios.get(`${URL}/menu/list`)).data;
+      orderList = (await Axios.get(`${URL}/order/list?type=today`)).data;
     } catch (e) {
       console.log(e);
     } finally {
@@ -118,9 +132,9 @@ class Home extends React.Component {
         selectMenu: menu,
         selectType: type,
         option,
-        userName,
+        userName
       } = this.state;
-      
+
       if (userName === "") {
         alert("이름을 입력해주세요");
         return;
@@ -129,7 +143,7 @@ class Home extends React.Component {
         alert("도시락을 선택하세요");
         return;
       }
-      await Axios.post("http://192.168.11.150:3002/order/insert", {
+      await Axios.post(`${URL}/order/insert`, {
         type,
         menu,
         user,
@@ -167,17 +181,19 @@ class Home extends React.Component {
         orderList.map(order => {
           const o = menuList.filter(menu => menu._id === order.menu)[0];
           return (
-            <TodayList key={order._id}>
-              <TodayUser>{order.user}</TodayUser>
-              <TodayMenu>{o.name}</TodayMenu>
-              <TodayPrice>{`${o.price}${
+            <MenuTableTr key={order._id}>
+              <MenuTableTd>{order.user}</MenuTableTd>
+              <MenuTableTd>{o.name}</MenuTableTd>
+              <MenuTableTd>{`${o.price}${
                 order.option ? " + 300(곱)" : ""
-              }`}</TodayPrice>
-            </TodayList>
+              }`}</MenuTableTd>
+            </MenuTableTr>
           );
         })
       ) : (
-        <TodayList>주문자가 없습니다.</TodayList>
+        <MenuTableTr>
+          <MenuTableTd colSpan={3}>주문자가 없습니다</MenuTableTd>
+        </MenuTableTr>
       );
     return loading ? (
       <Container>준비중</Container>
@@ -239,14 +255,19 @@ class Home extends React.Component {
           </ContentContainer>
           <TodayContainer>
             오늘의 주문 리스트
-            <TodayListHeader key="0">
-              <TodayUser>주문자</TodayUser>
-              <TodayMenu>메뉴</TodayMenu>
-              <TodayPrice>가격(곱배기)</TodayPrice>
-            </TodayListHeader>
-            {orders}
+            <MenuTable>
+              <MenuTableHead>
+                <MenuTableTr>
+                  <MenuTableTd>주문자</MenuTableTd>
+                  <MenuTableTd>메뉴</MenuTableTd>
+                  <MenuTableTd>가격(곱배기)</MenuTableTd>
+                </MenuTableTr>
+              </MenuTableHead>
+              <MenuTableBody>{orders}</MenuTableBody>
+            </MenuTable>
           </TodayContainer>
         </Content>
+        <Result result={this.state.orderList}/>
         <UpdateList>
           <div>추후 업데이트 예정 목록</div>
           <UpdateContent>디자인 깔끔 수정</UpdateContent>
