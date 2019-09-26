@@ -2,6 +2,7 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
+import { requestGet, requestPost } from "../api/api";
 
 const Container = styled.div``;
 
@@ -11,7 +12,7 @@ const MenuPrice = styled.input``;
 
 const MenuType = styled.select``;
 
-const MenuSave = styled.button``;
+const SaveBtn = styled.button``;
 
 const BigMenu = styled.div`
   margin: 10px;
@@ -21,9 +22,11 @@ const SubMenu = styled.div`
   margin: 10px;
 `;
 
-const MenuInput = styled.input``;
+const Input = styled.input``;
 
-const BigMenuSave = styled.button``;
+const UserCreate = styled.div`
+  margin: 10px;
+`;
 
 class Admin extends React.Component {
   constructor(props) {
@@ -34,12 +37,14 @@ class Admin extends React.Component {
       menuList: [],
       name: "",
       price: "",
-      type: ""
+      type: "",
+      user: ""
     };
   }
   // 대 분류 불러오기
   componentDidMount = async () => {
-    const { data } = await axios.get("http://192.168.11.150:3002/type/list");
+    // const { data } = await axios.get("http://192.168.11.150:3002/type/list");
+    const { data } = await requestGet('/type/list');
     this.setState({ typeList: data });
   };
 
@@ -48,6 +53,11 @@ class Admin extends React.Component {
     this.setState({
       [e.target.name]: e.target.value
     });
+  };
+
+  handleSubmitCreateUser = async e => {
+    const { user } = this.state;
+    await requestPost("/user/create", { user });
   };
 
   // 대 분류 추가하기
@@ -92,10 +102,15 @@ class Admin extends React.Component {
       );
     return (
       <Container>
+        <UserCreate>
+          유저 추가하기 :
+          <Input name="user" onChange={this.handleChange} />
+          <SaveBtn onClick={this.handleSubmitCreateUser}>사용자 추가</SaveBtn>
+        </UserCreate>
         <BigMenu>
           분류 추가하기 :
-          <MenuInput name="type" onChange={this.handleChange} />
-          <BigMenuSave onClick={this.handleSubmitBigMenu}>추가</BigMenuSave>
+          <Input name="type" onChange={this.handleChange} />
+          <SaveBtn onClick={this.handleSubmitBigMenu}>추가</SaveBtn>
         </BigMenu>
         <SubMenu>
           메뉴 종류 :
@@ -106,7 +121,7 @@ class Admin extends React.Component {
           서브메뉴 이름 : <MenuTitle name="name" onChange={this.handleChange} />
           서브메뉴 가격 :{" "}
           <MenuPrice name="price" onChange={this.handleChange} />
-          <MenuSave onClick={this.handleSubmitMenu}>전송</MenuSave>
+          <SaveBtn onClick={this.handleSubmitMenu}>전송</SaveBtn>
         </SubMenu>
       </Container>
     );

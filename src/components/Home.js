@@ -2,8 +2,6 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import Axios from "axios";
-
-import dotenv from "dotenv";
 import Result from "./Result";
 
 dotenv.config();
