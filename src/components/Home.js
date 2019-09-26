@@ -4,8 +4,6 @@ import styled from "styled-components";
 import Axios from "axios";
 import Result from "./Result";
 
-dotenv.config();
-
 const URL = "http://192.168.11.150:3002";
 
 const Container = styled.main``;
