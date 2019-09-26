@@ -8,7 +8,7 @@ import Result from "./Result";
 
 dotenv.config();
 
-const URL = "http://localhost:3002";
+const URL = "http://192.168.11.150:3002";
 
 const Container = styled.main``;
 
@@ -180,6 +180,7 @@ class Home extends React.Component {
       orderList.length > 0 ? (
         orderList.map(order => {
           const o = menuList.filter(menu => menu._id === order.menu)[0];
+          const delivery = 3600 / orderList.length;
           return (
             <MenuTableTr key={order._id}>
               <MenuTableTd>{order.user}</MenuTableTd>
@@ -187,12 +188,13 @@ class Home extends React.Component {
               <MenuTableTd>{`${o.price}${
                 order.option ? " + 300(곱)" : ""
               }`}</MenuTableTd>
+              <MenuTableTd>{`${o.price + (order.option ? 300 : 0) + delivery} 원`}</MenuTableTd>
             </MenuTableTr>
           );
         })
       ) : (
         <MenuTableTr>
-          <MenuTableTd colSpan={3}>주문자가 없습니다</MenuTableTd>
+          <MenuTableTd colSpan={4}>주문자가 없습니다</MenuTableTd>
         </MenuTableTr>
       );
     return loading ? (
@@ -254,13 +256,14 @@ class Home extends React.Component {
             )}
           </ContentContainer>
           <TodayContainer>
-            오늘의 주문 리스트
+            오늘의 주문 리스트 || 배달비 : {`${3600} || 개인 부담 배달비 : ${3600 / this.state.orderList.length}`}
             <MenuTable>
               <MenuTableHead>
                 <MenuTableTr>
                   <MenuTableTd>주문자</MenuTableTd>
                   <MenuTableTd>메뉴</MenuTableTd>
                   <MenuTableTd>가격(곱배기)</MenuTableTd>
+                  <MenuTableTd>개인 합계(배달비 포함)</MenuTableTd>
                 </MenuTableTr>
               </MenuTableHead>
               <MenuTableBody>{orders}</MenuTableBody>
